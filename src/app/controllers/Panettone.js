@@ -23,15 +23,20 @@ class PanettoneController {
     return res.status(201).json(panettone);
   }
 
-  async show(req, res) {
+  async index(req, res) {
     const { filter } = req.query;
 
-    if (filter === 'nunhum') {
-      return await Panettone.find();
+    if (filter === 'nenhum') {
+      const panettones = await Panettone.find(
+        {},
+        { name: 1, brand: 1, urlImg: 1 }
+      );
+
+      return res.status(200).json(panettones);
     }
     const panettones = await Panettone.find(
       { brand: filter },
-      { urlImg: 1, name: 1, brand: 1 }
+      { name: 1, brand: 1, urlImg: 1 }
     );
 
     return res.status(200).json(panettones);
@@ -47,9 +52,18 @@ class PanettoneController {
       uniqueArray.push(brand);
     });
 
-    // console.log(uniqueArray);
-
     return res.status(200).json({ brands: uniqueArray });
+  }
+
+  async show(req, res) {
+    const { name } = req.params;
+
+    const panettone = await Panettone.findOne(
+      { name },
+      { weight: 1, price: 1, about: 1, urlImg: 1, brand: 1 }
+    );
+
+    return res.status(200).json(panettone);
   }
 }
 
